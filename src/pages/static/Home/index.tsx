@@ -57,6 +57,7 @@ function Home() {
           identifier: uniqueId,
           created_at: timestamp,
           short_url: shortenedLink,
+          user_id: user ? user.id : null 
         },
       ])
       .single();
