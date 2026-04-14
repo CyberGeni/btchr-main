@@ -41,13 +41,18 @@ function Home() {
 
       return result;
     };
+
     const uniqueId = generateUniqueId();
     const timestamp = new Date().toISOString();
 
     // Construct the shortened URL
     const shortenedLink = `https://btchr.vercel.app/${uniqueId}`;
+
     setIsLoading(true);
     setShortenLinkText('Shortening link...')
+
+    const { data: { user } } = await supabase.auth.getUser()
+
     // Save the original URL and unique identifier to the database
     await supabase
       .from('links')
@@ -57,7 +62,7 @@ function Home() {
           identifier: uniqueId,
           created_at: timestamp,
           short_url: shortenedLink,
-          user_id: user ? user.id : null 
+          user_id: user ? user.id : null
         },
       ])
       .single();

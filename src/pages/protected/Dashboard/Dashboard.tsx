@@ -107,16 +107,20 @@ const Dashboard: React.FC = () => {
 
         switch (sortBy) {
             case 'old-new':
-                sorted.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+                sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
                 break
             case 'new-old':
-                sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
                 break
             case 'alpha-asc':
-                sorted.sort((a, b) => a.name.localeCompare(b.name))
+                sorted.sort((a, b) =>
+                    (a.name || a.linkName || '').localeCompare(b.name || b.linkName || '')
+                )
                 break
             case 'alpha-desc':
-                sorted.sort((a, b) => b.name.localeCompare(a.name))
+                sorted.sort((a, b) =>
+                    (b.name || b.linkName || '').localeCompare(a.name || a.linkName || '')
+                )
                 break
             case 'clicks-high':
                 sorted.sort((a, b) => b.click_count - a.click_count)
