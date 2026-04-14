@@ -35,7 +35,7 @@ const Dashboard: React.FC = () => {
     const [links, setLinks] = useState<Link[]>([]);
     const [selectedLink, setSelectedLink] = useState<Link | null>(null);
     const [showDetails, setShowDetails] = useState(false)
-
+    const [sortBy, setSortBy] = useState('new-old')
     // fetch user data
     useEffect(() => {
         const fetchUser = async () => {
@@ -93,14 +93,47 @@ const Dashboard: React.FC = () => {
             maxCount = locationCountMap[location];
         }
     }
-    
-    //   Display the most frequent location on the client side
-    console.log('Most frequent location:', mostFrequentLocation);
-    console.log(selectedLink)
 
- 
+    const sortingOptions = [
+        { label: 'Date (old - new)', value: 'old-new' },
+        { label: 'Date (new - old)', value: 'new-old' },
+        { label: 'alphabetically (a - z)', value: 'alpha-asc' },
+        { label: 'alphabetically (z - a)', value: 'alpha-desc' },
+        { label: 'clicks (high - low)', value: 'clicks-high' },
+        { label: 'clicks (low - high)', value: 'clicks-low' },
+    ]
+    const sortedLinks = () => {
+        const sorted = [...links]
 
-    console.log(selectedLink?.click_location)
+        switch (sortBy) {
+            case 'old-new':
+                sorted.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+                break
+            case 'new-old':
+                sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                break
+            case 'alpha-asc':
+                sorted.sort((a, b) => a.name.localeCompare(b.name))
+                break
+            case 'alpha-desc':
+                sorted.sort((a, b) => b.name.localeCompare(a.name))
+                break
+            case 'clicks-high':
+                sorted.sort((a, b) => b.click_count - a.click_count)
+                break
+            case 'clicks-low':
+                sorted.sort((a, b) => a.click_count - b.click_count)
+                break
+            default:
+                break
+        }
+
+        return sorted
+    }
+
+    const handleSortingSelect = (option: { value: any; }) => {
+        setSortBy(option.value)
+    }
     return (
         <>
             <section className='dashboard bg-gray-200 mt-20 w-full'>
@@ -113,10 +146,43 @@ const Dashboard: React.FC = () => {
                             {/* link header */}
                             <div className="w-auto px-6 py-4 bg-white flex items-center justify-between">
                                 <h3 className='font-medium text-lg'>All links</h3>
-                                <div className='flex rounded-md border border-gray-100 items-center bg-white space-x-2 px-5 py-3 shadow-[1px_1px_2px_0px_rgba(203,203,209,0.29)]'>
-                                    <span className='text-gray-500'>Sort by</span>
-                                    <img className='w-5 h-5' src={filterIcon} alt="" />
-                                </div>
+
+                                <Popover className="relative">
+                                    {() => (
+                                        <>
+                                            <Popover.Button>
+                                                <div className='flex rounded-md border border-gray-100 items-center bg-white space-x-2 px-5 py-3 shadow-[1px_1px_2px_0px_rgba(203,203,209,0.29)]'>
+                                                    <span className='text-gray-500'>Sort by</span>
+                                                    <img className='w-5 h-5' src={filterIcon} alt="" />
+                                                </div>
+                                            </Popover.Button>
+                                            <Transition
+                                                as={Fragment}
+                                                enter="transition ease-out duration-200"
+                                                enterFrom="opacity-0 translate-y-1"
+                                                enterTo="opacity-100 translate-y-0"
+                                                leave="transition ease-in duration-150"
+                                                leaveFrom="opacity-100 translate-y-0"
+                                                leaveTo="opacity-0 translate-y-1"
+                                            >
+                                                <Popover.Panel className="absolute -right-24 z-10 mt-3 w-screen max-w-[11.5rem] -translate-x-1/2 transform px-4 sm:px-0">
+                                                    <div className="p-3 *:py-3 bg-white flex flex-col overflow-hidden rounded-lg shadow-lg">
+                                                        {sortingOptions.map((option) => (
+                                                            <span
+                                                                key={option.value}
+                                                                onClick={() => handleSortingSelect(option)}
+                                                                className={`text-gray-700 cursor-pointer hover:bg-gray-100 p-2 rounded-md block ${sortBy === option.value ? 'bg-gray-100' : ''
+                                                                    }`}
+                                                            >
+                                                                {option.label}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </Popover.Panel>
+                                            </Transition>
+                                        </>
+                                    )}
+                                </Popover>
                             </div>
                             {/* list of links */}
                             <div className='overflow-x-hidden pb-20 sm:pb-0 overflow-y-scroll h-[76vh] lg:h-[77vh]'>
@@ -126,7 +192,7 @@ const Dashboard: React.FC = () => {
                                         <span className='text-gray-600'>You've not shortened any links yet.</span>
                                     </div>
                                 )}
-                                {links.map((link) => (
+                                {sortedLinks().map((link) => (
                                     <div
                                         key={link?.id}
                                         onClick={() => {
@@ -182,7 +248,7 @@ const Dashboard: React.FC = () => {
 
                                             {/* top click source */}
                                             <TopClickSource clickSource={selectedLink?.click_source} />
-                                            
+
                                             {/* top location */}
                                             <div className='bg-white rounded-md shadow p-6 space-y-6'>
                                                 <div className='flex justify-between text-gray-500 '>

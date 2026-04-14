@@ -90,7 +90,7 @@ function Home() {
       console.error("Error sharing: ", error)
     }
   }
-
+  const currentYear = new Date().getFullYear();
   return (
     <div className='font-circular'>
       <div className="overflow-hidden fixed w-screen h-screen -z-10">
@@ -208,7 +208,7 @@ function Home() {
                 Access to all basic features
               </li> */}
             </ul>
-            
+
           </div>
 
           {/* pro plan tier card */}
@@ -260,7 +260,7 @@ function Home() {
                   <path d="M7 0L13.9282 4V12L7 16L0.0717969 12V4L7 0Z" fill="#475467" />
                 </svg>
                 Custom link previews
-              </li>    
+              </li>
             </ul>
             <NavLink to='/register' className='mx-8 my-6 bg-blue-700 text-white text-center py-2 px-4 rounded-lg block'>Create account</NavLink>
           </div>
@@ -271,17 +271,17 @@ function Home() {
       <section>
         {/* <FAQs /> */}
       </section>
-      <footer className='space-y-6 md:space-y-0 flex-col md:flex-row bg-gray-900 px-[5%] py-9 border-t border-gray-800 border- flex justify-between items-center'>
+      <footer className='space-y-6 md:space-y-0 flex-col md:grid md:grid-cols-3 md:place-content-between bg-gray-900 px-[5%] py-9 border-t border-gray-800 border- flex justify-between items-center'>
         <div className='space-y-6 md:space-y-0 flex flex-col md:flex-row items-center md:space-x-8'>
           <span className='flex items-center text-gray-100 font-bold text-4xl tracking-tighter'>btchr<span className='text-blue-700 text-6xl -mt-4'>.</span></span>
           <div className='text-gray-200 space-x-4'>
             <a href="">Features</a>
-            <a href="">Pricing</a>
+            {/* <a href="">Pricing</a> */}
             <a href="">FAQs</a>
           </div>
         </div>
         <div className='text-gray-400 text-center order-last md:order-none'>built by <a className='underline underline-offset-2' href="https://x.com/cybergenie_" target='_blank'>treasure.</a></div>
-        <div className='text-gray-400 text-center '>&copy; 2023 btchr.</div>
+        <div className='text-gray-400 text-center md:text-right'>all rights reserved &copy; {currentYear} btchr.</div>
       </footer>
     </div>
   )
